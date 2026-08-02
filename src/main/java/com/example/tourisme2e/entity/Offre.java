@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import java.time.LocalDateTime;
 @Entity
 @Table(name = "offre")
 @Getter
@@ -45,6 +45,13 @@ public class Offre {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatutOffre statut;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dateCreation;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreation = LocalDateTime.now();
+    }
 
     // Relation 1..N vers Disponibilite (une offre a plusieurs créneaux)
     @OneToMany(mappedBy = "offre", cascade = CascadeType.ALL, orphanRemoval = true)

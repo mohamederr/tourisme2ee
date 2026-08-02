@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # 1. Le conteneur de la base de données MySQL
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysql_tourisme2e
+    environment:
+      MYSQL_DATABASE: tourisme2e_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # 2. Le conteneur de ton API Spring Boot
+  backend:
+    image: tourisme2e-api # Le nom de l'image qu'on vient de construire
+    container_name: api_tourisme2e
+    depends_on:
+      - mysqldb # On dit à l'API d'attendre que la base de données soit prête
+    ports:
+      - "8080:8080"
+    environment:
+      # On écrase les propriétés de connexion pour pointer vers le conteneur mysqldb
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/tourisme2e_db?serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+# On crée un volume persistant pour ne pas perdre les données si le conteneur s'éteint
+volumes:
+  mysql_data:

@@ -1,6 +1,5 @@
 package com.example.tourisme2e.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,10 +31,9 @@ public class Pavillon {
     @Column(nullable = false)
     private Integer capaciteMax;
 
-    // socle ou extension (activable selon préavis 1 mois, §B05)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String statut;
-
+    private StatutPavillon statut;
 
     @OneToMany(mappedBy = "pavillon", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disponibilite> disponibilites = new ArrayList<>();

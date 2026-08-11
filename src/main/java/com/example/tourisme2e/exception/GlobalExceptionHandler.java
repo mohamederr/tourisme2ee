@@ -52,4 +52,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildBody(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "Une erreur interne est survenue", req));
     }
+    @ExceptionHandler(PlacesInsuffisantesException.class)
+    public ResponseEntity<Map<String, Object>> handlePlacesInsuffisantes(PlacesInsuffisantesException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildBody(HttpStatus.CONFLICT, "CONFLICT", ex.getMessage(), req));
+    }
+
+    @ExceptionHandler(org.springframework.orm.ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<Map<String, Object>> handleOptimisticLock(Exception ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildBody(HttpStatus.CONFLICT, "CONFLICT",
+                        "Cette disponibilité a été modifiée entre-temps, veuillez réessayer", req));
+    }
+    @ExceptionHandler(ConflitEtatException.class)
+    public ResponseEntity<Map<String, Object>> handleConflitEtat(ConflitEtatException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildBody(HttpStatus.CONFLICT, "CONFLICT", ex.getMessage(), req));
+    }
 }

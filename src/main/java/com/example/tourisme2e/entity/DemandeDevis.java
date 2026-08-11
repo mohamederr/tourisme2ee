@@ -54,6 +54,15 @@ public class DemandeDevis {
     @OneToOne(mappedBy = "demandeDevis", cascade = CascadeType.ALL)
     private Reservation reservation;
 
+    // Champs spécifiques MICE (nullable si segment SENIOR)
+    private Integer dureeJours;
+
+    @Column(columnDefinition = "TEXT")
+    private String equipementRequis; // stocké en JSON, ex: ["videoprojecteur","sonorisation"]
+
+    // Champ spécifique SENIOR (nullable si segment MICE)
+    private String paysOrigine;
+
     @PrePersist
     protected void onCreate() {
         this.dateCreation = LocalDateTime.now();

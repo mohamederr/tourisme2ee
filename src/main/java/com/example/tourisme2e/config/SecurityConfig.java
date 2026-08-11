@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/pavillons/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/demandes-devis").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/demandes-devis/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/reservations/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

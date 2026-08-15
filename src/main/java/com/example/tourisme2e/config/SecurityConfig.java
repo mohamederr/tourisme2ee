@@ -50,8 +50,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/demandes-devis").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/demandes-devis/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/reservations/**").hasRole("ADMIN")
-
+                        .requestMatchers("/dashboard/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
+
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

@@ -31,6 +31,10 @@ public class Reservation {
     @Column(nullable = false)
     private StatutReservation statut;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "disponibilite_id")
+    private Disponibilite disponibilite;
+
     @PrePersist
     protected void onCreate() {
         if (this.statut == null) {

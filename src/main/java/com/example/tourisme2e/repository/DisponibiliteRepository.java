@@ -13,9 +13,13 @@ public interface DisponibiliteRepository extends JpaRepository<Disponibilite, Lo
 
     @Query("SELECT d FROM Disponibilite d WHERE d.offre.id = :offreId " +
             "AND d.dateDebut <= :dateFin AND d.dateFin >= :dateDebut")
+
     List<Disponibilite> rechercherCreneaux(
             @Param("offreId") Long offreId,
             @Param("dateDebut") LocalDate dateDebut,
             @Param("dateFin") LocalDate dateFin
     );
+    @Query("SELECT d FROM Disponibilite d WHERE d.pavillon.nom = :nomPavillon")
+    List<Disponibilite> findByPavillonNom(@Param("nomPavillon") String nomPavillon);
 }
+

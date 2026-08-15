@@ -3,6 +3,7 @@ package com.example.tourisme2e.service;
 import com.example.tourisme2e.dto.DemandeDevisRequest;
 import com.example.tourisme2e.dto.DemandeDevisResponse;
 import com.example.tourisme2e.entity.*;
+import com.example.tourisme2e.entity.Segment;  // ← BON import
 import com.example.tourisme2e.exception.ResourceNotFoundException;
 import com.example.tourisme2e.repository.DemandeDevisRepository;
 import com.example.tourisme2e.repository.OffreRepository;

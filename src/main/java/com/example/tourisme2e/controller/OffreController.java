@@ -1,5 +1,7 @@
 package com.example.tourisme2e.controller;
 
+import com.example.tourisme2e.dto.DisponibiliteResponse;
+import com.example.tourisme2e.service.DisponibiliteService;
 import com.example.tourisme2e.dto.OffreRequest;
 import com.example.tourisme2e.dto.OffreResponse;
 import com.example.tourisme2e.dto.PageResponse;
@@ -14,12 +16,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/offres")
 @RequiredArgsConstructor
 public class OffreController {
 
     private final OffreService offreService;
+    private final DisponibiliteService disponibiliteService;
+
 
     @GetMapping
     public ResponseEntity<PageResponse<OffreResponse>> lister(
@@ -43,6 +50,14 @@ public class OffreController {
     @GetMapping("/{id}")
     public ResponseEntity<OffreResponse> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(offreService.getOffre(id));
+    }
+    @GetMapping("/{id}/disponibilites")
+    public ResponseEntity<List<DisponibiliteResponse>> disponibilitesDeLoffre(
+            @PathVariable Long id,
+            @RequestParam LocalDate dateDebut,
+            @RequestParam LocalDate dateFin
+    ) {
+        return ResponseEntity.ok(disponibiliteService.rechercher(id, dateDebut, dateFin));
     }
 
     @PostMapping

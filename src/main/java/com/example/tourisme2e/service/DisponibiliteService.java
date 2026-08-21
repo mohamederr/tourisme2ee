@@ -25,12 +25,14 @@ public class DisponibiliteService {
     private final OffreRepository offreRepository;
     private final PavillonRepository pavillonRepository;
 
+    @Transactional(readOnly = true)  // ← AJOUTÉ
     public List<DisponibiliteResponse> rechercher(Long offreId, LocalDate dateDebut, LocalDate dateFin) {
         return disponibiliteRepository.rechercherCreneaux(offreId, dateDebut, dateFin).stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    @Transactional  // ← AJOUTÉ aussi (bonne pratique pour toute écriture)
     public DisponibiliteResponse creer(DisponibiliteRequest request) {
         Offre offre = offreRepository.findById(request.getOffreId())
                 .orElseThrow(() -> new ResourceNotFoundException("Offre non trouvée avec l'id : " + request.getOffreId()));
@@ -43,17 +45,12 @@ public class DisponibiliteService {
         disponibilite.setDateDebut(request.getDateDebut());
         disponibilite.setDateFin(request.getDateFin());
         disponibilite.setPlacesTotales(request.getPlacesTotales());
-        disponibilite.setPlacesRestantes(request.getPlacesTotales()); // au départ, toutes les places sont libres
+        disponibilite.setPlacesRestantes(request.getPlacesTotales());
 
         disponibiliteRepository.save(disponibilite);
         return toResponse(disponibilite);
     }
 
-    /**
-     * Décrémente les places restantes de manière sûre face à la concurrence.
-     * Le @Version sur l'entité Disponibilite protège contre deux requêtes
-     * simultanées qui tenteraient de réserver les dernières places en même temps.
-     */
     @Transactional
     public void reserverPlaces(Long disponibiliteId, int nbParticipants) {
         Disponibilite disponibilite = disponibiliteRepository.findById(disponibiliteId)
@@ -67,9 +64,6 @@ public class DisponibiliteService {
 
         disponibilite.setPlacesRestantes(disponibilite.getPlacesRestantes() - nbParticipants);
         disponibiliteRepository.save(disponibilite);
-        // Si une autre transaction a modifié cette ligne entre-temps,
-        // Hibernate lève ObjectOptimisticLockingFailureException ici automatiquement
-        // grâce au champ @Version — géré par le GlobalExceptionHandler → 409 CONFLICT
     }
 
     private DisponibiliteResponse toResponse(Disponibilite d) {

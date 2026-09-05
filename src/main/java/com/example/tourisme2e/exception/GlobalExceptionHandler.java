@@ -69,4 +69,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildBody(HttpStatus.CONFLICT, "CONFLICT", ex.getMessage(), req));
     }
+    @ExceptionHandler(GroupeCompletException.class)
+    public ResponseEntity<Map<String, Object>> handleGroupeComplet(GroupeCompletException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildBody(HttpStatus.CONFLICT, "CONFLICT", ex.getMessage(), req));
+    }
 }

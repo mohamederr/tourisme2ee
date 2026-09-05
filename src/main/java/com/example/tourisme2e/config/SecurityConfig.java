@@ -51,6 +51,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/demandes-devis/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/reservations/**").hasRole("ADMIN")
                         .requestMatchers("/dashboard/**").hasRole("ADMIN")
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/groupes/ouverts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/groupes/*/participants").permitAll()
+                        .requestMatchers("/reductions/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                        .requestMatchers(HttpMethod.PATCH, "/groupes/*/valider").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/groupes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/groupes/*/participants/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/participants/*/confirmer").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/participants/*/refuser").hasRole("ADMIN")
+                        .requestMatchers("/hotels/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
 
                 )

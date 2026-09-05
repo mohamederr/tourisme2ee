@@ -95,7 +95,9 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "https://www.tourisme2e.ma",
                 "https://tourisme2e.ma",
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "http://localhost:51734"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));

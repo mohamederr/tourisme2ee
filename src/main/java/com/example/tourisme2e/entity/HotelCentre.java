@@ -1,10 +1,10 @@
 package com.example.tourisme2e.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,11 +25,14 @@ public class HotelCentre {
     @Column(nullable = false)
     private String nom;
 
-    private String type; // hôtel, centre d'estivage...
+    private String type;
+
+    @Enumerated(EnumType.STRING)
+    private TypeHebergement typeHebergement;
 
     private String localisation;
 
-    private Integer classement; // 2 à 5 étoiles
+    private Integer classement;
 
     @Column(nullable = false)
     private Integer capaciteLits;
@@ -38,10 +41,11 @@ public class HotelCentre {
     private BigDecimal tarifJourPersonne;
 
     private LocalDate disponibiliteDebut;
+
     private LocalDate disponibiliteFin;
 
     @Column(columnDefinition = "TEXT")
-    private String equipements; // Wifi, Climatisation, Piscine... (texte libre ou JSON)
+    private String equipements;
 
     private Boolean accessiblePmr;
 
@@ -52,7 +56,7 @@ public class HotelCentre {
     private String conventionPdfUrl;
 
     @Column(columnDefinition = "TEXT")
-    private String photosGalerie; // JSON liste d'URLs
+    private String photosGalerie;
 
     @Override
     public boolean equals(Object o) {

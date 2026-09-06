@@ -1,17 +1,18 @@
 package com.example.tourisme2e.entity;
 
-
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "offre")
 @Getter
@@ -30,38 +31,74 @@ public class Offre {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Le cahier des charges impose un segment SENIOR ou MICE
+    @Column(columnDefinition = "TEXT")
+    private String descriptionCourte;
+
+    @Column(columnDefinition = "TEXT")
+    private String descriptionLongue;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Segment segment;
 
+    @Enumerated(EnumType.STRING)
+    private TypeGroupe typeGroupe;
+
+    private LocalDate dateDebut;
+
+    private LocalDate dateFin;
+
+    private Integer capaciteMin;
+
+    private Integer capaciteMax;
+
     private BigDecimal prixIndicatif;
 
-    private Integer duree; // Durée en jours
+    private Integer duree;
 
-    private String photos; // URL ou chemin de l'image (ou JSON si plusieurs)
+    private String photos;
 
-    // Le statut doit être ACTIF ou INACTIF
+    @Column(columnDefinition = "TEXT")
+    private String sitesTouristiques;
+
+    @Column(columnDefinition = "TEXT")
+    private String activitesIncluses;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hotel_id")
+    private HotelCentre hotel;
+
+    private Integer niveauConfort;
+
+    @Enumerated(EnumType.STRING)
+    private Pension pension;
+
+    private BigDecimal prixBase;
+
+    @Column(columnDefinition = "TEXT")
+    private String servicesAdditionnels;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatutOffre statut;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime dateCreation;
 
     @PrePersist
     protected void onCreate() {
         this.dateCreation = LocalDateTime.now();
+        if (this.statut == null) {
+            this.statut = StatutOffre.BROUILLON;
+        }
     }
 
-    // Relation 1..N vers Disponibilite (une offre a plusieurs créneaux)
     @OneToMany(mappedBy = "offre", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disponibilite> disponibilites = new ArrayList<>();
 
-    // Relation 1..N vers DemandeDevis (une offre peut recevoir plusieurs demandes)
     @OneToMany(mappedBy = "offre", cascade = CascadeType.ALL)
     private List<DemandeDevis> demandesDevis = new ArrayList<>();
 
-    // equals/hashCode basés sur l'id (bonne pratique pour les entités JPA)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -40,6 +40,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/offres/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hotels-centres/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/sites-touristiques/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/services-touristiques/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/partenaires/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/testimonials/accueil").permitAll()
                         .requestMatchers(HttpMethod.GET, "/disponibilites/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
@@ -63,6 +68,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/participants/*/confirmer").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/participants/*/refuser").hasRole("ADMIN")
                         .requestMatchers("/hotels/**").hasRole("ADMIN")
+                        .requestMatchers("/hotels-centres/**").hasRole("ADMIN")
+                        .requestMatchers("/sites-touristiques/**").hasRole("ADMIN")
+                        .requestMatchers("/services-touristiques/**").hasRole("ADMIN")
+                        .requestMatchers("/partenaires/**").hasRole("ADMIN")
+                        .requestMatchers("/testimonials/**").hasRole("ADMIN")
+                        .requestMatchers("/admins/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/participants/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/participants/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
 
                 )

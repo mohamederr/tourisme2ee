@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -24,6 +25,7 @@ public class GroupeService {
     private final GroupeRepository groupeRepository;
     private final HotelCentreRepository hotelCentreRepository;
     private final ParticipantRepository participantRepository;
+    private final DevisPdfService devisPdfService;
 
     @Transactional
     public GroupeResponse creerGroupeFerme(CreerGroupeFermeRequest request, Utilisateur utilisateur) {
@@ -91,6 +93,15 @@ public class GroupeService {
     }
 
     @Transactional(readOnly = true)
+    public Page<GroupeResponse> listerDemandesValidation(Pageable pageable) {
+        return groupeRepository.findByTypeGroupeAndStatutIn(
+                TypeGroupe.OUVERT,
+                List.of(StatutGroupe.EN_ATTENTE_VALIDATION, StatutGroupe.CORRECTIONS_DEMANDEES),
+                pageable
+        ).map(this::toResponse);
+    }
+
+    @Transactional(readOnly = true)
     public GroupeResponse getGroupe(Long id) {
         Groupe groupe = groupeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Groupe non trouvé avec l'id : " + id));
@@ -102,13 +113,55 @@ public class GroupeService {
         Groupe groupe = groupeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Groupe non trouvé avec l'id : " + id));
 
-        if (request.isApprouver()) {
+        groupe.setCommentaireValidation(request.getCommentaire());
+        if (request.getAction() == ActionValidationGroupe.APPROUVER) {
             groupe.setStatut(StatutGroupe.EN_FORMATION);
-        } else {
-            groupe.setStatut(StatutGroupe.ARCHIVE);
+            if (request.getPrixBase() != null) {
+                groupe.setPrixBase(request.getPrixBase());
+            }
+        } else if (request.getAction() == ActionValidationGroupe.DEMANDER_CORRECTIONS) {
+            groupe.setStatut(StatutGroupe.CORRECTIONS_DEMANDEES);
+        } else if (request.getAction() == ActionValidationGroupe.REFUSER) {
+            groupe.setStatut(StatutGroupe.REFUSE);
         }
         groupeRepository.save(groupe);
         return toResponse(groupe);
+    }
+
+    @Transactional
+    public GroupeResponse genererDevis(Long id, GenererDevisRequest request) {
+        Groupe groupe = groupeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Groupe non trouve avec l'id : " + id));
+
+        BigDecimal hebergement = valeur(request.getMontantHebergement());
+        BigDecimal restauration = valeur(request.getMontantRestauration());
+        BigDecimal transport = valeur(request.getMontantTransport());
+        BigDecimal services = valeur(request.getMontantServices());
+        BigDecimal reductions = valeur(request.getMontantReductions());
+        BigDecimal total = hebergement.add(restauration).add(transport).add(services).subtract(reductions);
+        if (total.signum() < 0) {
+            total = BigDecimal.ZERO;
+        }
+
+        groupe.setMontantHebergement(hebergement);
+        groupe.setMontantRestauration(restauration);
+        groupe.setMontantTransport(transport);
+        groupe.setMontantServices(services);
+        groupe.setMontantReductions(reductions);
+        groupe.setMontantTotalDevis(total);
+        groupe.setAcompteDevis(total.multiply(new BigDecimal("0.10")));
+        groupe.setSoldeDevis(total.multiply(new BigDecimal("0.90")));
+        groupe.setDevisPdfUrl(request.getDevisPdfUrl() != null ? request.getDevisPdfUrl() : "/api/v1/groupes/" + id + "/devis.pdf");
+        groupe.setStatut(StatutGroupe.DEVIS_ENVOYE);
+        groupeRepository.save(groupe);
+        return toResponse(groupe);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] telechargerDevis(Long id) {
+        Groupe groupe = groupeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Groupe non trouve avec l'id : " + id));
+        return devisPdfService.generer(groupe);
     }
 
     @Transactional(readOnly = true)
@@ -118,7 +171,14 @@ public class GroupeService {
         return new GroupeResponse(
                 g.getId(), g.getTitre(), g.getDescriptionCourte(), g.getTypeGroupe(), g.getStatut(),
                 g.getDateDebut(), g.getDateFin(), g.getCapaciteMin(), g.getCapaciteMax(),
-                confirmes, placesRestantes, g.getPrixBase(), g.getMessage()
+                confirmes, placesRestantes, g.getPrixBase(), g.getMessage(), g.getCommentaireValidation(),
+                g.getMontantHebergement(), g.getMontantRestauration(), g.getMontantTransport(),
+                g.getMontantServices(), g.getMontantReductions(), g.getMontantTotalDevis(),
+                g.getAcompteDevis(), g.getSoldeDevis(), g.getDevisPdfUrl()
         );
+    }
+
+    private BigDecimal valeur(BigDecimal montant) {
+        return montant != null ? montant : BigDecimal.ZERO;
     }
 }

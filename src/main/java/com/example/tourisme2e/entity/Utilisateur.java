@@ -45,6 +45,11 @@ public class Utilisateur implements UserDetails {
     private Role role;
 
     @Enumerated(EnumType.STRING)
+    private RoleAdmin roleAdmin;
+
+    private Boolean actif = true;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TypeProfil typeProfil;
 
@@ -87,7 +92,7 @@ public class Utilisateur implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return Boolean.TRUE.equals(actif);
     }
 
     @Override
@@ -97,7 +102,7 @@ public class Utilisateur implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return Boolean.TRUE.equals(actif);
     }
 
     @Override

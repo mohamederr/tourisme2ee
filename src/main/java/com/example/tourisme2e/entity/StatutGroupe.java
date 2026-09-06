@@ -2,9 +2,12 @@ package com.example.tourisme2e.entity;
 
 public enum StatutGroupe {
     BROUILLON,
-    EN_ATTENTE_VALIDATION, // pour un groupe ouvert créé par un client, avant approbation admin
+    EN_ATTENTE_VALIDATION,
+    CORRECTIONS_DEMANDEES,
+    REFUSE,
     ACTIF,
-    EN_FORMATION,          // spécifique groupe ouvert : encore sous 10 participants
+    EN_FORMATION,
     COMPLET,
-    ARCHIVE
+    ARCHIVE,
+    DEVIS_ENVOYE
 }

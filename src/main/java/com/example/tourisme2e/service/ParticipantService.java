@@ -11,7 +11,10 @@ import com.example.tourisme2e.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -111,11 +114,50 @@ public class ParticipantService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public Page<ParticipantAdminResponse> rechercherAdmin(Long groupeId, StatutParticipant statut,
+                                                          LocalDateTime debut, LocalDateTime fin,
+                                                          String q, Pageable pageable) {
+        return participantRepository.rechercherAdmin(groupeId, statut, debut, fin, q, pageable)
+                .map(this::toAdminResponse);
+    }
+
+    @Transactional
+    public void supprimerParticipant(Long participantId) {
+        if (!participantRepository.existsById(participantId)) {
+            throw new ResourceNotFoundException("Participant non trouve avec l'id : " + participantId);
+        }
+        participantRepository.deleteById(participantId);
+    }
+
+    @Transactional(readOnly = true)
+    public String exporterCsv(Long groupeId, StatutParticipant statut, LocalDateTime debut, LocalDateTime fin, String q) {
+        StringBuilder csv = new StringBuilder("Nom,Email,Offre,Statut,Age,Telephone,Pays,Date,Montant acompte,Notes\n");
+        participantRepository.rechercherAdminExport(groupeId, statut, debut, fin, q).forEach(p -> csv.append(csv(p.getNom() + " " + p.getPrenom())).append(',')
+                .append(csv(p.getEmail())).append(',')
+                .append(csv(p.getGroupe().getTitre())).append(',')
+                .append(csv(p.getStatut().name())).append(',')
+                .append(p.getAge()).append(',')
+                .append(csv(p.getTelephone())).append(',')
+                .append(csv(p.getPays())).append(',')
+                .append(p.getDateInscription()).append(',')
+                .append(p.getMontantAcompte() != null ? p.getMontantAcompte() : "").append(',')
+                .append(csv(p.getMessage())).append('\n'));
+        return csv.toString();
+    }
+
     private ParticipantAdminResponse toAdminResponse(Participant p) {
         return new ParticipantAdminResponse(
                 p.getId(), p.getGroupe().getId(), p.getNom(), p.getPrenom(), p.getEmail(),
                 p.getTelephone(), p.getAge(), p.getSexe(), p.getPays(), p.getMessage(),
                 p.getStatut(), p.getMontantAcompte(), p.getDateInscription()
         );
+    }
+
+    private String csv(String value) {
+        if (value == null) {
+            return "";
+        }
+        return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 }

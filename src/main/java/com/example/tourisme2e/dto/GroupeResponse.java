@@ -24,4 +24,14 @@ public class GroupeResponse {
     private int placesRestantes;
     private BigDecimal prixBase;
     private String message;
+    private String commentaireValidation;
+    private BigDecimal montantHebergement;
+    private BigDecimal montantRestauration;
+    private BigDecimal montantTransport;
+    private BigDecimal montantServices;
+    private BigDecimal montantReductions;
+    private BigDecimal montantTotalDevis;
+    private BigDecimal acompteDevis;
+    private BigDecimal soldeDevis;
+    private String devisPdfUrl;
 }

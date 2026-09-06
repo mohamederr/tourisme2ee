@@ -89,6 +89,27 @@ public class Groupe {
     @Column(columnDefinition = "TEXT")
     private String message;
 
+    @Column(columnDefinition = "TEXT")
+    private String commentaireValidation;
+
+    private BigDecimal montantHebergement;
+
+    private BigDecimal montantRestauration;
+
+    private BigDecimal montantTransport;
+
+    private BigDecimal montantServices;
+
+    private BigDecimal montantReductions;
+
+    private BigDecimal montantTotalDevis;
+
+    private BigDecimal acompteDevis;
+
+    private BigDecimal soldeDevis;
+
+    private String devisPdfUrl;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime dateCreation;
 

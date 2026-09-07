@@ -55,8 +55,16 @@ public class Groupe {
     private Integer capaciteMax; // 20 max pour OUVERT
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CategorieSite categorieSitePrincipale; // simplifié ici ; multi-select sites via table de liaison plus tard
+    @Column(nullable = true)
+    private CategorieSite categorieSitePrincipale;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "groupe_sites_touristiques",
+            joinColumns = @JoinColumn(name = "groupe_id"),
+            inverseJoinColumns = @JoinColumn(name = "site_touristique_id")
+    )
+    private List<SiteTouristique> sites = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String activitesIncluses;
@@ -110,6 +118,14 @@ public class Groupe {
 
     private String devisPdfUrl;
 
+    private String numeroDevis;
+
+    private LocalDate dateDevis;
+
+    private LocalDate dateLimiteSolde;
+
+    private Boolean acompteRegle = false;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime dateCreation;
 
@@ -121,6 +137,9 @@ public class Groupe {
         this.dateCreation = LocalDateTime.now();
         if (this.statut == null) {
             this.statut = (typeGroupe == TypeGroupe.OUVERT) ? StatutGroupe.EN_FORMATION : StatutGroupe.BROUILLON;
+        }
+        if (this.acompteRegle == null) {
+            this.acompteRegle = false;
         }
     }
 

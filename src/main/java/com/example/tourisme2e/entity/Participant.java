@@ -56,6 +56,12 @@ public class Participant {
 
     private BigDecimal montantAcompte; // 10% versé
 
+    private String modePaiement; // STRIPE, CARTE_BANCAIRE, ORANGE_MONEY, VIREMENT
+
+    private String referencePaiement;
+
+    private LocalDateTime datePaiement;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime dateInscription;
 

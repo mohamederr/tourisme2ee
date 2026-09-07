@@ -38,7 +38,7 @@ public class Offre {
     private String descriptionLongue;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Segment segment;
 
     @Enumerated(EnumType.STRING)
@@ -48,9 +48,11 @@ public class Offre {
 
     private LocalDate dateFin;
 
-    private Integer capaciteMin;
+    @Column(columnDefinition = "INT DEFAULT 10")
+    private Integer capaciteMin = 10;
 
-    private Integer capaciteMax;
+    @Column(columnDefinition = "INT DEFAULT 20")
+    private Integer capaciteMax = 20;
 
     private BigDecimal prixIndicatif;
 
@@ -60,6 +62,14 @@ public class Offre {
 
     @Column(columnDefinition = "TEXT")
     private String sitesTouristiques;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "offre_sites_touristiques",
+            joinColumns = @JoinColumn(name = "offre_id"),
+            inverseJoinColumns = @JoinColumn(name = "site_touristique_id")
+    )
+    private List<SiteTouristique> sites = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String activitesIncluses;
@@ -90,6 +100,21 @@ public class Offre {
         this.dateCreation = LocalDateTime.now();
         if (this.statut == null) {
             this.statut = StatutOffre.BROUILLON;
+        }
+        if (this.capaciteMin == null) {
+            this.capaciteMin = 10;
+        }
+        if (this.capaciteMax == null) {
+            this.capaciteMax = 20;
+        }
+        if (this.segment == null) {
+            this.segment = Segment.SENIOR;
+        }
+        if (this.prixIndicatif == null && this.prixBase != null) {
+            this.prixIndicatif = this.prixBase;
+        }
+        if (this.prixBase == null && this.prixIndicatif != null) {
+            this.prixBase = this.prixIndicatif;
         }
     }
 

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,8 +34,11 @@ public class CreerGroupeFermeRequest {
     @NotNull
     private Integer nbParticipants; // fixe et connu d'avance pour un groupe fermé
 
-    @NotNull
+    // Catégorie principale (optionnel si siteTouristiqueIds est renseigné)
     private CategorieSite categorieSitePrincipale;
+
+    // Multi-select des sites touristiques (identifiants)
+    private List<Long> siteTouristiqueIds = new ArrayList<>();
 
     private String activitesIncluses;
 

@@ -50,6 +50,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/offres/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/offres/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/offres/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/offres/**").hasRole("ADMIN")
                         .requestMatchers("/pavillons/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/demandes-devis").hasRole("ADMIN")
@@ -76,6 +77,10 @@ public class SecurityConfig {
                         .requestMatchers("/admins/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/participants/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/participants/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/groupes/*/devis/generer").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/participants/*/payer-acompte").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/participants/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/groupes/{id}").permitAll()
                         .anyRequest().authenticated()
 
                 )

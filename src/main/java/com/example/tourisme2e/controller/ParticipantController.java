@@ -1,7 +1,8 @@
 package com.example.tourisme2e.controller;
 
-import com.example.tourisme2e.dto.ParticipantAdminResponse;
 import com.example.tourisme2e.dto.PageResponse;
+import com.example.tourisme2e.dto.PaiementAcompteRequest;
+import com.example.tourisme2e.dto.ParticipantAdminResponse;
 import com.example.tourisme2e.dto.ParticipantPublicResponse;
 import com.example.tourisme2e.dto.RejoindreGroupeRequest;
 import com.example.tourisme2e.entity.StatutParticipant;
@@ -51,6 +52,18 @@ public class ParticipantController {
     @PatchMapping("/participants/{id}/refuser")
     public ResponseEntity<ParticipantAdminResponse> refuser(@PathVariable Long id) {
         return ResponseEntity.ok(participantService.refuserParticipant(id));
+    }
+
+    /**
+     * Enregistre le paiement de l'acompte de 10% pour un participant.
+     * §8 Étape 3 du cahier des charges.
+     */
+    @PatchMapping("/participants/{id}/payer-acompte")
+    public ResponseEntity<ParticipantAdminResponse> payerAcompte(
+            @PathVariable Long id,
+            @Valid @RequestBody PaiementAcompteRequest request
+    ) {
+        return ResponseEntity.ok(participantService.payerAcompte(id, request));
     }
 
     @GetMapping("/participants/admin")

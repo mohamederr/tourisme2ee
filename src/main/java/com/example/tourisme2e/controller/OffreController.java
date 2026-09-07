@@ -1,12 +1,13 @@
 package com.example.tourisme2e.controller;
 
 import com.example.tourisme2e.dto.DisponibiliteResponse;
-import com.example.tourisme2e.service.DisponibiliteService;
 import com.example.tourisme2e.dto.OffreRequest;
 import com.example.tourisme2e.dto.OffreResponse;
 import com.example.tourisme2e.dto.PageResponse;
 import com.example.tourisme2e.entity.Segment;
 import com.example.tourisme2e.entity.StatutOffre;
+import com.example.tourisme2e.entity.TypeGroupe;
+import com.example.tourisme2e.service.DisponibiliteService;
 import com.example.tourisme2e.service.OffreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,11 @@ public class OffreController {
     private final OffreService offreService;
     private final DisponibiliteService disponibiliteService;
 
-
     @GetMapping
     public ResponseEntity<PageResponse<OffreResponse>> lister(
             @RequestParam(required = false) Segment segment,
             @RequestParam(required = false) StatutOffre statut,
+            @RequestParam(required = false) TypeGroupe typeGroupe,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int taille,
             @RequestParam(defaultValue = "dateCreation,desc") String tri
@@ -44,13 +45,14 @@ public class OffreController {
         );
         Pageable pageable = PageRequest.of(page, taille, sort);
 
-        return ResponseEntity.ok(offreService.listerOffres(segment, statut, pageable));
+        return ResponseEntity.ok(offreService.listerOffres(segment, statut, typeGroupe, pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<OffreResponse> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(offreService.getOffre(id));
     }
+
     @GetMapping("/{id}/disponibilites")
     public ResponseEntity<List<DisponibiliteResponse>> disponibilitesDeLoffre(
             @PathVariable Long id,
@@ -68,6 +70,14 @@ public class OffreController {
     @PutMapping("/{id}")
     public ResponseEntity<OffreResponse> modifier(@PathVariable Long id, @Valid @RequestBody OffreRequest request) {
         return ResponseEntity.ok(offreService.modifierOffre(id, request));
+    }
+
+    @PatchMapping("/{id}/statut")
+    public ResponseEntity<OffreResponse> changerStatut(
+            @PathVariable Long id,
+            @RequestParam StatutOffre statut
+    ) {
+        return ResponseEntity.ok(offreService.changerStatut(id, statut));
     }
 
     @DeleteMapping("/{id}")

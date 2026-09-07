@@ -85,4 +85,13 @@ public class GroupeController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(groupeService.telechargerDevis(id));
     }
+
+    /**
+     * Permet au responsable/client de confirmer son devis reçu.
+     * §11 Étape 6 du cahier des charges.
+     */
+    @PatchMapping("/{id}/devis/confirmer")
+    public ResponseEntity<GroupeResponse> confirmerDevisParClient(@PathVariable Long id) {
+        return ResponseEntity.ok(groupeService.confirmerDevisParClient(id));
+    }
 }

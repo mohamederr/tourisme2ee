@@ -46,8 +46,10 @@ public class Utilisateur implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private RoleAdmin roleAdmin;
-
+    @Column(nullable = false)
     private Boolean actif = true;
+
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

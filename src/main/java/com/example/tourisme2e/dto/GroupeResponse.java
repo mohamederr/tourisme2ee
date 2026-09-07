@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -22,6 +23,8 @@ public class GroupeResponse {
     private Integer capaciteMax;
     private long nbParticipantsConfirmes;
     private int placesRestantes;
+    // Places restantes avant d'atteindre le seuil de 10 personnes (groupe valide)
+    private int placesVersSeuilValidation;
     private BigDecimal prixBase;
     private String message;
     private String commentaireValidation;
@@ -34,4 +37,10 @@ public class GroupeResponse {
     private BigDecimal acompteDevis;
     private BigDecimal soldeDevis;
     private String devisPdfUrl;
+    private String numeroDevis;
+    private LocalDate dateDevis;
+    private LocalDate dateLimiteSolde;
+    private Boolean acompteRegle;
+    // Résumé des sites touristiques associés au groupe
+    private List<SiteTouristiqueSummaryDto> sites;
 }

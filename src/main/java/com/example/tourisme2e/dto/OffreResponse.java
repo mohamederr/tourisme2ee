@@ -6,12 +6,18 @@ import com.example.tourisme2e.entity.StatutOffre;
 import com.example.tourisme2e.entity.TypeGroupe;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class OffreResponse {
     private Long id;
@@ -29,6 +35,8 @@ public class OffreResponse {
     private Integer duree;
     private String photos;
     private String sitesTouristiques;
+    private List<Long> siteTouristiqueIds = new ArrayList<>();
+    private List<SiteTouristiqueSummaryDto> sites = new ArrayList<>();
     private String activitesIncluses;
     private Long hotelId;
     private String hotelNom;
@@ -38,4 +46,8 @@ public class OffreResponse {
     private String servicesAdditionnels;
     private StatutOffre statut;
     private LocalDateTime dateCreation;
+
+    public Long getHotelCentreId() {
+        return this.hotelId;
+    }
 }
